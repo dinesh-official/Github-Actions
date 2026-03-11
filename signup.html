@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Meradhan — Sign Up</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      font-family: 'Poppins', sans-serif;
+      color: #1a1a2e;
+      background: #ffffff;
+    }
+
+    /* ═══ LEFT SIDE ═══ */
+    .left-side {
+      flex: 1;
+      padding: 36px 60px 50px;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+
+    /* Navbar */
+    .navbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 48px;
+    }
+    .logo-text {
+      font-size: 28px;
+      font-weight: 700;
+      color: #1a1a2e;
+      letter-spacing: -0.5px;
+    }
+    .logo-text span { color: #0a1f5c; }
+    .logo-img {
+      height: 40px;
+      width: auto;
+    }
+    .nav-login {
+      font-size: 16px;
+      font-weight: 600;
+      color: #0a1f5c;
+      text-decoration: none;
+      padding: 10px 28px;
+      border-radius: 10px;
+      transition: background 0.2s, color 0.2s;
+    }
+    .nav-login:hover {
+      background: #eef0f5;
+      color: #0a1f5c;
+    }
+
+    /* Form */
+    .form-area {
+      max-width: 540px;
+      opacity: 0;
+      transform: translateY(16px);
+      animation: mount 0.5s ease 0.1s forwards;
+    }
+    @keyframes mount { to { opacity: 1; transform: translateY(0); } }
+
+    .form-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: #1a1a2e;
+      margin-bottom: 36px;
+    }
+
+    /* Fields */
+    .field {
+      margin-bottom: 26px;
+    }
+    .field-label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      color: #2d3748;
+      margin-bottom: 10px;
+    }
+    .input-field {
+      width: 100%;
+      height: 58px;
+      padding: 0 20px;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 12px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 15px;
+      color: #1a1a2e;
+      background: #ffffff;
+      outline: none;
+      transition: border-color 0.25s, box-shadow 0.25s;
+    }
+    .input-field::placeholder {
+      color: #a0aec0;
+    }
+    .input-field:focus {
+      border-color: #0a1f5c;
+      box-shadow: 0 0 0 3px rgba(10, 31, 92, 0.08);
+    }
+    .input-field.err {
+      border-color: #ef4444;
+    }
+    .input-field.err:focus {
+      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.08);
+    }
+
+    /* Select */
+    .select-wrap {
+      position: relative;
+    }
+    .select-field {
+      width: 100%;
+      height: 58px;
+      padding: 0 48px 0 20px;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 12px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 15px;
+      color: #a0aec0;
+      background: #ffffff;
+      outline: none;
+      appearance: none;
+      -webkit-appearance: none;
+      cursor: pointer;
+      transition: border-color 0.25s, box-shadow 0.25s;
+    }
+    .select-field:focus {
+      border-color: #0a1f5c;
+      box-shadow: 0 0 0 3px rgba(10, 31, 92, 0.08);
+    }
+    .select-field.has-value {
+      color: #1a1a2e;
+    }
+    .select-field.err {
+      border-color: #ef4444;
+    }
+    .select-arrow {
+      position: absolute;
+      right: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+      color: #a0aec0;
+    }
+
+    /* Error */
+    .error-msg {
+      display: none;
+      align-items: center;
+      gap: 6px;
+      margin-top: 8px;
+      font-size: 13px;
+      color: #ef4444;
+    }
+    .error-msg.show { display: flex; }
+
+    /* Button */
+    .submit-btn {
+      width: 100%;
+      height: 58px;
+      margin-top: 10px;
+      background: #0a1f5c;
+      border: none;
+      border-radius: 12px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+      color: #ffffff;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
+    }
+    .submit-btn:hover {
+      background: #142d7a;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 24px rgba(10, 31, 92, 0.35);
+    }
+    .submit-btn:active {
+      transform: translateY(0);
+      box-shadow: none;
+    }
+
+    /* Toast */
+    .toast {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 18px;
+      margin-bottom: 22px;
+      background: #e8f5e9;
+      border: 1px solid #a5d6a7;
+      border-radius: 12px;
+    }
+    .toast.show { display: flex; animation: popIn 0.35s ease; }
+    @keyframes popIn { 0% { opacity: 0; transform: scale(0.95); } 100% { opacity: 1; transform: scale(1); } }
+    .toast span { color: #2e7d32; font-size: 14px; font-weight: 500; }
+
+    .toast.error { background: #fef2f2; border-color: #fca5a5; }
+    .toast.error span { color: #dc2626; }
+
+    .submit-btn:disabled {
+      opacity: 0.6; cursor: not-allowed;
+      transform: none !important;
+      box-shadow: none !important;
+    }
+
+    .terms {
+      text-align: center;
+      color: #a0aec0;
+      font-size: 12.5px;
+      margin-top: 22px;
+      line-height: 1.7;
+    }
+    .terms a { color: #0a1f5c; text-decoration: none; }
+    .terms a:hover { text-decoration: underline; }
+
+    /* ═══ RIGHT SIDE ═══ */
+    .right-side {
+      width: 420px;
+      background: linear-gradient(160deg, #dbeafe 0%, #c7d7f5 40%, #b0c4ef 100%);
+      position: relative;
+      overflow: hidden;
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      padding: 60px 40px;
+    }
+    @media (min-width: 960px) {
+      .right-side { display: flex; }
+    }
+
+    /* Decorative shapes */
+    .right-side::before {
+      content: '';
+      position: absolute;
+      top: -60px;
+      right: -40px;
+      width: 250px;
+      height: 250px;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 30px;
+      transform: rotate(25deg);
+    }
+    .right-side::after {
+      content: '';
+      position: absolute;
+      top: 60px;
+      right: 60px;
+      width: 120px;
+      height: 120px;
+      background: rgba(255, 255, 255, 0.12);
+      border-radius: 20px;
+      transform: rotate(40deg);
+    }
+
+    .deco-shape-1 {
+      position: absolute;
+      bottom: -30px;
+      left: -20px;
+      width: 180px;
+      height: 180px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 28px;
+      transform: rotate(-15deg);
+    }
+
+    .right-content {
+      position: relative;
+      z-index: 2;
+    }
+
+    .right-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: #1a1a2e;
+      text-align: center;
+      margin-bottom: 40px;
+      line-height: 1.4;
+    }
+
+    /* Stat cards */
+    .stat-card {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 20px 22px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+      opacity: 0;
+      transform: translateX(20px);
+      animation: slideIn 0.5s ease forwards;
+    }
+    .stat-card:nth-child(2) { animation-delay: 0.15s; }
+    .stat-card:nth-child(3) { animation-delay: 0.3s; }
+    .stat-card:nth-child(4) { animation-delay: 0.45s; }
+    @keyframes slideIn { to { opacity: 1; transform: translateX(0); } }
+
+    .stat-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #dbeafe, #c7d7f5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .stat-icon svg {
+      width: 24px;
+      height: 24px;
+      stroke: #3b82f6;
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .stat-value {
+      font-size: 18px;
+      font-weight: 700;
+      color: #1a1a2e;
+      margin-bottom: 2px;
+    }
+    .stat-desc {
+      font-size: 13px;
+      color: #64748b;
+      line-height: 1.4;
+    }
+
+    /* Responsive */
+    @media (max-width: 959px) {
+      .left-side {
+        padding: 28px 24px 40px;
+      }
+      .form-area {
+        max-width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══ LEFT SIDE ═══ -->
+  <div class="left-side">
+
+    <!-- Navbar -->
+    <nav class="navbar">
+      <img alt="meradhan" loading="lazy" width="400" height="200" decoding="async" class="logo-img" style="color:transparent" src="https://www.meradhan.co/logo/mera-dhan-logo.svg">
+      <a href="index.html" class="nav-login">Login</a>
+    </nav>
+
+    <!-- Form -->
+    <div class="form-area">
+      <h1 class="form-title">Create your account</h1>
+
+      <!-- Toast -->
+      <div class="toast" id="toast">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="11" stroke="#2e7d32" stroke-width="2"/><path d="M7 12.5l3 3 7-7" stroke="#2e7d32" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span id="toastMsg"></span>
+      </div>
+
+      <!-- Full Name -->
+      <div class="field">
+        <label class="field-label">Full Name</label>
+        <input type="text" class="input-field" id="nameInput" placeholder="eg: John Doe" />
+        <div class="error-msg" id="nameError">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="#ef4444" stroke-width="1.5"/><path d="M7 4.5V7.5M7 9.5v0" stroke="#ef4444" stroke-width="1.5" stroke-linecap="round"/></svg>
+          <span></span>
+        </div>
+      </div>
+
+      <!-- Email -->
+      <div class="field">
+        <label class="field-label">Email</label>
+        <input type="email" class="input-field" id="emailInput" placeholder="eg: johndoe@abc.com" />
+        <div class="error-msg" id="emailError">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="#ef4444" stroke-width="1.5"/><path d="M7 4.5V7.5M7 9.5v0" stroke="#ef4444" stroke-width="1.5" stroke-linecap="round"/></svg>
+          <span></span>
+        </div>
+      </div>
+
+      <!-- Mobile Number -->
+      <div class="field">
+        <label class="field-label">Mobile Number</label>
+        <input type="tel" class="input-field" id="phoneInput" placeholder="98567 *****" maxlength="15" />
+        <div class="error-msg" id="phoneError">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="#ef4444" stroke-width="1.5"/><path d="M7 4.5V7.5M7 9.5v0" stroke="#ef4444" stroke-width="1.5" stroke-linecap="round"/></svg>
+          <span></span>
+        </div>
+      </div>
+
+      <!-- Category -->
+      <div class="field">
+        <label class="field-label">Please Select your Category</label>
+        <div class="select-wrap">
+          <select class="select-field" id="categorySelect">
+            <option value="" disabled selected>Select category</option>
+            <option value="individual">Individual</option>
+            <option value="business">Business</option>
+            <option value="enterprise">Enterprise</option>
+            <option value="student">Student</option>
+          </select>
+          <svg class="select-arrow" width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="error-msg" id="categoryError">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="#ef4444" stroke-width="1.5"/><path d="M7 4.5V7.5M7 9.5v0" stroke="#ef4444" stroke-width="1.5" stroke-linecap="round"/></svg>
+          <span></span>
+        </div>
+      </div>
+
+      <button class="submit-btn" id="submitBtn">Continue</button>
+
+      <div class="terms">
+        By signing up, you agree to our <a href="#">Terms</a> and <a href="#">Privacy Policy</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ RIGHT SIDE ═══ -->
+  <div class="right-side">
+    <div class="deco-shape-1"></div>
+    <div class="right-content">
+      <h2 class="right-title">India's Leading Secure<br/>Digital Platform</h2>
+
+      <div class="stat-card">
+        <div class="stat-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+        </div>
+        <div>
+          <div class="stat-value">₹40000 Cr+</div>
+          <div class="stat-desc">Investment facilitated</div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">
+          <svg viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+        </div>
+        <div>
+          <div class="stat-value">7% – 13%</div>
+          <div class="stat-desc">Diverse yield range with tenors starting 3 months</div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">
+          <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+        </div>
+        <div>
+          <div class="stat-value">AAA to BBB</div>
+          <div class="stat-desc">Widest selection across the rating spectrum</div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <div>
+          <div class="stat-value">100%</div>
+          <div class="stat-desc">Secure & verified platform</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+(function(){
+  const $ = s => document.querySelector(s);
+  const phoneInput = $("#phoneInput");
+
+  // Only digits for phone
+  phoneInput.addEventListener("input", function() {
+    this.value = this.value.replace(/\D/g, "").slice(0, 15);
+  });
+
+  // Category select color change
+  const catSelect = $("#categorySelect");
+  catSelect.addEventListener("change", function() {
+    this.classList.toggle("has-value", this.value !== "");
+  });
+
+  // Error helpers
+  function showErr(id, msg) {
+    const el = $(id);
+    el.classList.add("show");
+    el.querySelector("span").textContent = msg;
+  }
+  function hideErr(id) { $(id).classList.remove("show"); }
+  function markErr(id) { $(id).classList.add("err"); }
+  function clearErr(id) { $(id).classList.remove("err"); }
+
+  // Clear errors on focus
+  const fieldMap = {
+    nameInput: "nameError",
+    emailInput: "emailError",
+    phoneInput: "phoneError",
+    categorySelect: "categoryError"
+  };
+  Object.entries(fieldMap).forEach(([inp, err]) => {
+    $(`#${inp}`).addEventListener("focus", () => {
+      hideErr(`#${err}`);
+      clearErr(`#${inp}`);
+    });
+  });
+
+  // Toast helper
+  function showToast(msg, isError) {
+    const toast = $("#toast");
+    toast.classList.remove("show", "error");
+    $("#toastMsg").textContent = msg;
+    if (isError) toast.classList.add("error");
+    toast.classList.add("show");
+    if (isError) setTimeout(() => toast.classList.remove("show", "error"), 4000);
+  }
+
+  // Submit → Call API → Store in DB → Redirect to login
+  $("#submitBtn").addEventListener("click", async () => {
+    let ok = true;
+
+    // Name
+    const name = $("#nameInput").value.trim();
+    if (!name) { showErr("#nameError", "Full name is required"); markErr("#nameInput"); ok = false; }
+    else if (name.length < 2) { showErr("#nameError", "Name is too short"); markErr("#nameInput"); ok = false; }
+    else { hideErr("#nameError"); clearErr("#nameInput"); }
+
+    // Email
+    const email = $("#emailInput").value.trim();
+    if (!email) { showErr("#emailError", "Email is required"); markErr("#emailInput"); ok = false; }
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showErr("#emailError", "Enter a valid email"); markErr("#emailInput"); ok = false; }
+    else { hideErr("#emailError"); clearErr("#emailInput"); }
+
+    // Phone
+    const phone = phoneInput.value.replace(/\D/g, "");
+    if (!phone) { showErr("#phoneError", "Mobile number is required"); markErr("#phoneInput"); ok = false; }
+    else if (phone.length < 7) { showErr("#phoneError", "Mobile number is too short"); markErr("#phoneInput"); ok = false; }
+    else if (phone.length > 15) { showErr("#phoneError", "Mobile number is too long"); markErr("#phoneInput"); ok = false; }
+    else { hideErr("#phoneError"); clearErr("#phoneInput"); }
+
+    // Category
+    if (!catSelect.value) { showErr("#categoryError", "Please select a category"); markErr("#categorySelect"); ok = false; }
+    else { hideErr("#categoryError"); clearErr("#categorySelect"); }
+
+    if (!ok) return;
+
+    // Disable button while saving
+    const btn = $("#submitBtn");
+    btn.disabled = true;
+    btn.textContent = "Creating account...";
+
+    try {
+      const response = await fetch("http://localhost:5000/api/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          full_name: name,
+          email: email,
+          phone: phone,
+          category: catSelect.value
+        })
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        // ✅ Account created — show success then redirect to login
+        showToast("Account created successfully! Redirecting to login...", false);
+        setTimeout(() => {
+          window.location.href = "index.html";
+        }, 2000);
+      } else {
+        // ❌ Error (duplicate phone/email etc.)
+        showToast(data.message, true);
+        btn.disabled = false;
+        btn.textContent = "Continue";
+      }
+    } catch (error) {
+      showToast("Server not reachable. Please try again.", true);
+      btn.disabled = false;
+      btn.textContent = "Continue";
+    }
+  });
+})();
+</script>
+</body>
+</html>

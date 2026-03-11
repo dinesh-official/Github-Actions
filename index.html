@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Meradhan — Log In</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Poppins', sans-serif;
+      background: #f0f2f5;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 420px;
+      margin: 20px;
+      padding: 50px 40px 44px;
+      background: #ffffff;
+      border-radius: 18px;
+      box-shadow: 0 2px 20px rgba(0,0,0,0.06);
+      text-align: center;
+      opacity: 0;
+      transform: translateY(16px);
+      animation: mount 0.5s ease 0.1s forwards;
+    }
+    @keyframes mount { to { opacity:1; transform:translateY(0); } }
+
+    /* ── Logo ── */
+    .logo {
+      margin-bottom: 28px;
+    }
+    .logo img {
+      height: 40px;
+      width: auto;
+    }
+
+    /* ── Header ── */
+    .welcome {
+      font-size: 26px;
+      font-weight: 700;
+      color: #1a1a2e;
+      margin-bottom: 8px;
+    }
+    .subtitle {
+      font-size: 15px;
+      color: #8e8e93;
+      margin-bottom: 36px;
+    }
+
+    /* ── Input ── */
+    .input-field {
+      width: 100%;
+      height: 54px;
+      padding: 0 18px;
+      border: 1.5px solid #e0e0e0;
+      border-radius: 12px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 15px;
+      color: #1a1a2e;
+      background: #ffffff;
+      outline: none;
+      transition: border-color 0.25s, box-shadow 0.25s;
+    }
+    .input-field::placeholder {
+      color: #b0b0b8;
+    }
+    .input-field:focus {
+      border-color: #0a1f5c;
+      box-shadow: 0 0 0 3px rgba(10,31,92,0.1);
+    }
+    .input-field.err {
+      border-color: #ef4444;
+    }
+    .input-field.err:focus {
+      box-shadow: 0 0 0 3px rgba(239,68,68,0.1);
+    }
+
+    /* Error */
+    .error-msg {
+      display: none;
+      align-items: center;
+      gap: 6px;
+      margin-top: 10px;
+      font-size: 13px;
+      color: #ef4444;
+      text-align: left;
+      animation: fadeIn 0.2s ease;
+    }
+    .error-msg.show { display: flex; }
+    @keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
+
+    /* ── Button ── */
+    .continue-btn {
+      width: 100%;
+      height: 54px;
+      margin-top: 32px;
+      background: #0a1f5c;
+      border: none;
+      border-radius: 12px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+      color: #ffffff;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
+    }
+    .continue-btn:hover {
+      background: #142d7a;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 24px rgba(10,31,92,0.35);
+    }
+    .continue-btn:active {
+      transform: translateY(0);
+      box-shadow: none;
+    }
+
+    /* ── Toast ── */
+    .toast {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 18px;
+      margin-bottom: 20px;
+      background: #e8f5e9;
+      border: 1px solid #a5d6a7;
+      border-radius: 12px;
+      text-align: left;
+    }
+    .toast.show {
+      display: flex;
+      animation: popIn 0.35s ease;
+    }
+    @keyframes popIn { 0%{opacity:0;transform:scale(.95);} 100%{opacity:1;transform:scale(1);} }
+    .toast span { color: #2e7d32; font-size: 14px; font-weight: 500; }
+
+    .toast.error { background: #fef2f2; border-color: #fca5a5; }
+    .toast.error span { color: #dc2626; }
+    .toast.error svg circle { stroke: #dc2626; }
+    .toast.error svg path { stroke: #dc2626; }
+
+    .continue-btn:disabled {
+      opacity: 0.6; cursor: not-allowed; transform: none !important;
+      box-shadow: none !important;
+    }
+
+    /* ── Switch link ── */
+    .switch-text {
+      margin-top: 32px;
+      font-size: 14px;
+      color: #8e8e93;
+    }
+    .switch-text a {
+      color: #0a1f5c;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .switch-text a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+
+    <!-- Logo -->
+    <div class="logo">
+      <img alt="meradhan" loading="lazy" width="400" height="200" decoding="async" class="w-auto h-10" style="color:transparent" src="https://www.meradhan.co/logo/mera-dhan-logo.svg">
+    </div>
+
+    <!-- Header -->
+    <h1 class="welcome">Welcome</h1>
+    <p class="subtitle">Login to Meradhan</p>
+
+    <!-- Toast -->
+    <div class="toast" id="toast">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="11" stroke="#2e7d32" stroke-width="2"/><path d="M7 12.5l3 3 7-7" stroke="#2e7d32" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span id="toastMsg"></span>
+    </div>
+
+    <!-- Mobile Number Input -->
+    <input type="tel" class="input-field" id="phoneInput" placeholder="Mobile Number" maxlength="15" />
+    <div class="error-msg" id="phoneError">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="#ef4444" stroke-width="1.5"/><path d="M7 4.5V7.5M7 9.5v0" stroke="#ef4444" stroke-width="1.5" stroke-linecap="round"/></svg>
+      <span id="phoneErrorMsg"></span>
+    </div>
+
+    <!-- Continue Button -->
+    <button class="continue-btn" id="submitBtn">Continue</button>
+
+    <!-- Switch to Signup -->
+    <div class="switch-text">
+      Don't have an account? <a href="signup.html">Sign up</a>
+    </div>
+
+  </div>
+
+<script>
+  
+// Where to redirect on success
+const REDIRECT_URL = "https://www.meradhan.co/partners-and-distributors";
+
+(function(){
+  const phoneInput = document.getElementById("phoneInput");
+  const errWrap = document.getElementById("phoneError");
+  const errMsg = document.getElementById("phoneErrorMsg");
+  const submitBtn = document.getElementById("submitBtn");
+  const toast = document.getElementById("toast");
+  const toastMsg = document.getElementById("toastMsg");
+
+  // Only allow digits
+  phoneInput.addEventListener("input", function() {
+    this.value = this.value.replace(/\D/g, "").slice(0, 15);
+  });
+
+  function validate(v) {
+    const d = v.replace(/\D/g, "");
+    if (!d) return "Mobile number is required";
+    if (d.length < 10) return "Mobile number is too short";
+    if (d.length > 10) return "Mobile number is too long";
+    return "";
+  }
+
+  function showErr(msg) {
+    errMsg.textContent = msg;
+    errWrap.classList.add("show");
+    phoneInput.classList.add("err");
+  }
+
+  function hideErr() {
+    errWrap.classList.remove("show");
+    phoneInput.classList.remove("err");
+  }
+
+  function showToast(msg, isError) {
+    toast.classList.remove("show", "error");
+    toastMsg.textContent = msg;
+    if (isError) toast.classList.add("error");
+    toast.classList.add("show");
+    setTimeout(() => toast.classList.remove("show", "error"), 4000);
+  }
+
+  phoneInput.addEventListener("focus", hideErr);
+
+  submitBtn.addEventListener("click", async function() {
+    const err = validate(phoneInput.value);
+    if (err) { showErr(err); return; }
+    hideErr();
+
+    // Disable button while checking
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Checking...";
+
+    try {
+      const response = await fetch("http://localhost:5000/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone: phoneInput.value })
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        // ✅ Number is valid — show success then redirect
+        showToast("✓ Number verified! Redirecting...", false);
+        setTimeout(() => {
+          window.location.href = REDIRECT_URL;
+        }, 1500);
+        return; // Don't re-enable button
+      } else {
+        // ❌ Number not found in database
+        showToast(data.message, true);
+      }
+    } catch (error) {
+      showToast("Server not reachable. Please try again.", true);
+    }
+
+    submitBtn.disabled = false;
+    submitBtn.textContent = "Continue";
+  });
+
+  phoneInput.addEventListener("keydown", function(e) {
+    if (e.key === "Enter") submitBtn.click();
+  });
+})();
+</script>
+</body>
+</html>
