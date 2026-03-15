@@ -10,7 +10,6 @@ env:
   ECR_REPOSITORY: dk
   ECS_CLUSTER: prod
   ECS_SERVICE: td-prod-service-9r7e1a94
-  TASK_DEFINITION: td-prod-service
   CONTAINER_NAME: dk
 
 jobs:
@@ -36,27 +35,20 @@ jobs:
         run: |
           docker build -t $ECR_REPOSITORY:${{ github.sha }} .
 
-      - name: Tag Docker Image
+      - name: Tag Image
         run: |
           docker tag $ECR_REPOSITORY:${{ github.sha }} \
           $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:${{ github.sha }}
 
-      - name: Push Image to ECR
+      - name: Push Image
         run: |
           docker push $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:${{ github.sha }}
-
-      - name: Get Current Task Definition
-        run: |
-          aws ecs describe-task-definition \
-          --task-definition $TASK_DEFINITION \
-          --query 'taskDefinition | {family: family, taskRoleArn: taskRoleArn, executionRoleArn: executionRoleArn, networkMode: networkMode, containerDefinitions: containerDefinitions, volumes: volumes, placementConstraints: placementConstraints, requiresCompatibilities: requiresCompatibilities, cpu: cpu, memory: memory}' \
-          > $TASK_DEFINITION
 
       - name: Update Image in Task Definition
         id: render-task-def
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
-          task-definition: task-definition.json
+          task-definition: prod-ts.json
           container-name: ${{ env.CONTAINER_NAME }}
           image: ${{ env.ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPOSITORY }}:${{ github.sha }}
 
