@@ -1,8 +1,13 @@
-name: Build Pipeline
+name: Build and Push Docker Image
 
 on:
   push:
     branches: ["main"]
+
+env:
+  AWS_REGION: ap-south-1
+  ACCOUNT_ID: 203918855762
+  ECR_REPOSITORY: dk
 
 jobs:
   build:
@@ -12,9 +17,25 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4.2.2
 
-      - name: Show Files
-        run: ls -la
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v2
 
       - name: Build Docker Image
         run: |
-          docker build -t dk:latest .
+          docker build -t $ECR_REPOSITORY:latest .
+
+      - name: Tag Docker Image
+        run: |
+          docker tag $ECR_REPOSITORY:latest \
+          $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:latest
+
+      - name: Push Docker Image
+        run: |
+          docker push $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:latest
