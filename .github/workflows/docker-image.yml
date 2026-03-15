@@ -1,17 +1,17 @@
-name: Build and Push Docker Image to ECR
+name: Build and Deploy to ECS
 
 on:
   push:
     branches: ["main"]
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
 
       - name: Checkout Code
-        uses: actions/checkout@v4.2.2
+        uses: actions/checkout@v4
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -36,3 +36,10 @@ jobs:
       - name: Push Docker Image
         run: |
           docker push 203918855762.dkr.ecr.ap-south-1.amazonaws.com/dk:latest
+
+      - name: Deploy to ECS
+        run: |
+          aws ecs update-service \
+          --cluster prod \
+          --service td-prod-service-9r7e1a94 \
+          --force-new-deployment
