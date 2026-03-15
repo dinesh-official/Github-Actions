@@ -50,7 +50,7 @@ jobs:
           aws ecs describe-task-definition \
           --task-definition $TASK_DEFINITION \
           --query 'taskDefinition | {family: family, taskRoleArn: taskRoleArn, executionRoleArn: executionRoleArn, networkMode: networkMode, containerDefinitions: containerDefinitions, volumes: volumes, placementConstraints: placementConstraints, requiresCompatibilities: requiresCompatibilities, cpu: cpu, memory: memory}' \
-          > task-definition.json
+          > $TASK_DEFINITION
 
       - name: Update Image in Task Definition
         id: render-task-def
