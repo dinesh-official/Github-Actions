@@ -3,7 +3,7 @@
     "containerDefinitions": [
         {
             "name": "prod-container",
-            "image": "203918855762.dkr.ecr.ap-south-1.amazonaws.com/dk@sha256:f0c668c488ce1d6b99532432d70c14f0d64aac5eb73cb0367e5e0d9796f78dcb",
+            "image": "203918855762.dkr.ecr.ap-south-1.amazonaws.com/dk:latest",
             "cpu": 0,
             "portMappings": [
                 {
