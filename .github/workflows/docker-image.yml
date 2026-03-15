@@ -25,6 +25,7 @@ jobs:
       - name: Login to ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
+        
       
       - name: Build and push with latest tag
         run: |
