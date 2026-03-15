@@ -4,6 +4,13 @@ on:
   push:
     branches: ["main"]
 
+env:
+  AWS_REGION: ap-south-1
+  ECR_REPOSITORY: dk
+  ECS_CLUSTER: prod
+  ECS_SERVICE: td-prod-service-9r7e1a94
+  ACCOUNT_ID: 203918855762
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -18,28 +25,33 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ap-south-1
+          aws-region: ${{ env.AWS_REGION }}
 
       - name: Login to Amazon ECR
         run: |
-          aws ecr get-login-password --region ap-south-1 | \
-          docker login --username AWS --password-stdin 203918855762.dkr.ecr.ap-south-1.amazonaws.com
+          aws ecr get-login-password --region $AWS_REGION | \
+          docker login --username AWS --password-stdin $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
 
       - name: Build Docker Image
         run: |
-          docker build --no-cache -t dk .
+          docker build -t $ECR_REPOSITORY:${{ github.sha }} .
 
       - name: Tag Docker Image
         run: |
-          docker tag dk:latest 203918855762.dkr.ecr.ap-south-1.amazonaws.com/dk:latest
+          docker tag $ECR_REPOSITORY:${{ github.sha }} \
+          $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:${{ github.sha }}
 
-      - name: Push Docker Image
+          docker tag $ECR_REPOSITORY:${{ github.sha }} \
+          $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:latest
+
+      - name: Push Docker Images
         run: |
-          docker push 203918855762.dkr.ecr.ap-south-1.amazonaws.com/dk:latest
+          docker push $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:${{ github.sha }}
+          docker push $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:latest
 
-      - name: Deploy to ECS
+      - name: Force ECS Deployment
         run: |
           aws ecs update-service \
-          --cluster prod \
-          --service td-prod-service-9r7e1a94 \
+          --cluster $ECS_CLUSTER \
+          --service $ECS_SERVICE \
           --force-new-deployment
