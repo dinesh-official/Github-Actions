@@ -35,6 +35,6 @@ jobs:
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
         with:
           task-definition: prod-ts.json
-          cluster: prod-cluster
-          service: prod-crm-ui
+          cluster: prod
+          service: td-prod-service-9r7e1a94
           force-new-deployment: true
