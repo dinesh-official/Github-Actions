@@ -27,7 +27,7 @@ jobs:
 
       - name: Build Docker Image
         run: |
-          docker build -t dk .
+          docker build --no-cache -t dk .
 
       - name: Tag Docker Image
         run: |
