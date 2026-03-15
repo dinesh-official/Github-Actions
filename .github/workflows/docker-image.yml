@@ -1,41 +1,46 @@
 name: Build and Push Docker Image
 
 on:
-  push:
-    branches: ["main"]
+push:
+branches: ["main"]
 
 env:
-  AWS_REGION: ap-south-1
-  ACCOUNT_ID: 203918855762
-  ECR_REPOSITORY: 203918855762.dkr.ecr.ap-south-1.amazonaws.com/dk
+AWS_REGION: ap-south-1
+ACCOUNT_ID: 203918855762
+ECR_REPOSITORY: dk
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+build:
+runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4.2.2
+```
+steps:
+  - name: Checkout repository
+    uses: actions/checkout@v4.2.2
 
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_REGION }}
+  - name: Configure AWS Credentials
+    uses: aws-actions/configure-aws-credentials@v4
+    with:
+      aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      aws-region: ${{ env.AWS_REGION }}
 
-      - name: Login to Amazon ECR
-        uses: aws-actions/amazon-ecr-login@v2
+  - name: Login to ECR
+    run: |
+      aws ecr get-login-password --region $AWS_REGION \
+      | docker login --username AWS --password-stdin \
+      $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
 
-      - name: Build Docker Image
-        run: |
-          docker build -t $ECR_REPOSITORY:latest .
+  - name: Build Docker Image
+    run: |
+      docker build -t dk:latest .
 
-      - name: Tag Docker Image
-        run: |
-          docker tag $ECR_REPOSITORY:latest \
-          $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:latest
+  - name: Tag Image for ECR
+    run: |
+      docker tag dk:latest \
+      $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/dk:latest
 
-      - name: Push Docker Image
-        run: |
-          docker push $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:latest
+  - name: Push Image to ECR
+    run: |
+      docker push $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/dk:latest
+```
