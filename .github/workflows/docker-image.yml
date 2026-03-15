@@ -34,7 +34,7 @@ jobs:
       - name: Deploy to Amazon ECS
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
         with:
-          task-definition: meradhan-crm-task.json
+          task-definition: prod-ui.json
           cluster: prod-cluster
           service: prod-crm-ui
           force-new-deployment: true
