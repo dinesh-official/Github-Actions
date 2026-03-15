@@ -2,12 +2,12 @@ name: Build and Push to ECR
 
 on:
   push:
-    branches: [ main, master ]
+    branches: main 
   workflow_dispatch: # Allow manual trigger
 
 env:
   AWS_REGION: us-east-1 # Change to your AWS region
-  ECR_REPOSITORY: 203918855762.dkr.ecr.ap-south-1.amazonaws.com/dk # Change to your ECR repo name
+  ECR_REPOSITORY: dk # Change to your ECR repo name
   IMAGE_TAG: latest
 
 jobs:
