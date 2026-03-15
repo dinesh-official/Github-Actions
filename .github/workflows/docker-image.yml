@@ -1,63 +1,16 @@
-name: Build and Deploy to ECS
+name: Build Pipeline
 
 on:
-push:
-branches: ["main"]
-
-env:
-AWS_REGION: ap-south-1
-ACCOUNT_ID: 203918855762
-ECR_REPOSITORY: dk
-ECS_CLUSTER: prod
-ECS_SERVICE: td-prod-service-9r7e1a94
-CONTAINER_NAME: dk
+  push:
+    branches: ["main"]
 
 jobs:
-deploy:
-runs-on: ubuntu-latest
+  build:
+    runs-on: ubuntu-latest
 
-```
-steps:
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-  - name: Checkout Repository
-    uses: actions/checkout@v4
-
-  - name: Configure AWS Credentials
-    uses: aws-actions/configure-aws-credentials@v4
-    with:
-      aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      aws-region: ${{ env.AWS_REGION }}
-
-  - name: Login to Amazon ECR
-    uses: aws-actions/amazon-ecr-login@v2
-
-  - name: Build Docker Image
-    run: |
-      docker build -t $ECR_REPOSITORY:latest .
-
-  - name: Tag Image
-    run: |
-      docker tag $ECR_REPOSITORY:latest \
-      $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:latest
-
-  - name: Push Image to ECR
-    run: |
-      docker push $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:latest
-
-  - name: Update Task Definition Image
-    id: render-task-def
-    uses: aws-actions/amazon-ecs-render-task-definition@v1
-    with:
-      task-definition: prod-ts.json
-      container-name: ${{ env.CONTAINER_NAME }}
-      image: ${{ env.ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPOSITORY }}:latest
-
-  - name: Deploy to ECS
-    uses: aws-actions/amazon-ecs-deploy-task-definition@v2
-    with:
-      task-definition: ${{ steps.render-task-def.outputs.task-definition }}
-      cluster: ${{ env.ECS_CLUSTER }}
-      service: ${{ env.ECS_SERVICE }}
-      wait-for-service-stability: true
-```
+      - name: Show Files
+        run: ls -la
