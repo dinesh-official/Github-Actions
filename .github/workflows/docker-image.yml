@@ -33,12 +33,12 @@ jobs:
 
       - name: Build Docker Image
         run: |
-          docker build -t $ECR_REPOSITORY:${{ github.sha }} .
+          docker build -t $ECR_REPOSITORY:latest .
 
       - name: Tag Image
         run: |
           docker tag $ECR_REPOSITORY:${{ github.sha }} \
-          $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:${{ github.sha }}
+          $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:latest
 
       - name: Push Image
         run: |
@@ -50,7 +50,7 @@ jobs:
         with:
           task-definition: prod-ts.json
           container-name: ${{ env.CONTAINER_NAME }}
-          image: ${{ env.ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPOSITORY }}:${{ github.sha }}
+          image: ${{ env.ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPOSITORY }}:latest
 
       - name: Deploy to ECS
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
